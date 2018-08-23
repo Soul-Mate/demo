@@ -49,7 +49,7 @@ func (s *TaskServer) List(ctx context.Context, void *todo.Void) (*todo.TaskList,
 		if err = binary.Read(bytes.NewReader(b[:8]), binary.LittleEndian, &l); err != nil {
 			return todoList, fmt.Errorf("could not decode message length: %v", err)
 		}
-		b = b[:8]
+		b = b[8:]
 		todoTask := new(todo.Task)
 		if err = proto.Unmarshal(b[:l], todoTask); err != nil {
 			return todoList, fmt.Errorf("could not read task: %v", err)
@@ -62,7 +62,7 @@ func (s *TaskServer) List(ctx context.Context, void *todo.Void) (*todo.TaskList,
 		}
 		todoTask.Text = fmt.Sprintf("%s %s", status, todoTask.Text)
 		todoList.Tasks = append(todoList.Tasks, todoTask)
-		b = b[:l]
+		b = b[l:]
 	}
 	return todoList, nil
 }
